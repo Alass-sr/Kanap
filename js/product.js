@@ -1,46 +1,71 @@
-let id = URLSearchParams;
+let article_url_id = window.location.search;
 
-function choiceProducts(oneProduct) {
+let url_Id = new URLSearchParams (article_url_id);  
+
+
+function choiceProd(article) {
   let item = document.querySelector(".item");
+  item.className = "item__img";
 
-
+  let choiceArticle = item.querySelector("article");
+  
   let itemImg = item.querySelector(".item__img");
   let image = document.createElement("img");
-  image.src = oneProduct.imageUrl;
-  image.alt = oneProduct.altTxt;
-
-  let productName = item.getElementById("title");
-  productName.textContent = oneProduct.name;
+  image.className = "item__img"
+  image.src = article.imageUrl;
+  image.alt = article.altTxt;
 
 
-  let price = item.getElementById("price");
-  price.textContent = oneProduct.price;
+  let choiceContent = item.querySelector(".item__content");
 
-  
-  let description = document.createElement("p");
+  let productName = item.querySelector("h1");
+  productName.className = "item__content__titlePrice";
+  productName.textContent = article.name;
 
-  item.querySelector(".item__content__settings");
-  let color = document.querySelector(".item__content__settings__color");
-  color.querySelector("color-select");
-  let selectColor = document.createElement("select");
+  let prodPrice = item.querySelector("span");
+  prodPrice.className = "item__content__titlePrice";
+  prodPrice.textContent = article.price;
 
+  let prodDescription = item.querySelector("p");
+  prodDescription.className = "item__content__description";
+  prodDescription.textContent = article.description;
+
+
+  item.appendChild(choiceArticle);
+
+  choiceArticle.appendChild(itemImg);
   itemImg.appendChild(image);
-  item.appendChild(productName);
-  item.appendChild(price);
-  item.appendChild(description);
+  choiceContent.appendChild(productName);
+  choiceContent.appendChild(prodPrice);
+  choiceContent.appendChild(prodDescription);
+
+
 
   return item;
 }
 
+
+// choiceProd();
+
 async function getProducts() {
 
+  let id = (new URL(window.location).searchParams.get("id"));
 
   await fetch("http://localhost:3000/api/products/"+ id)
     .then((response) => response.json())
     .then((data) => {
-      choiceProducts(data);
+       choiceProd(data);
+
+       let articleProd = document.getElementsByClassName("item");
+      for (let article of data) {
+        let item = choiceProd(article);
+        articleProd.appendChild(item);
+        
+      }
        console.log(data);
+
+
     });
 }
 
-getProducts();
+ getProducts();
