@@ -33,7 +33,7 @@ function choiceProd(article) {
 
   // Modification Price
   let prodPrice = item.querySelector("#price");
-  prodPrice.textContent = article.price;
+  prodPrice.textContent = article.price ;
 
   // Modification Description
   let prodDescription = item.querySelector("#description");
@@ -66,6 +66,7 @@ const qty = document.querySelector("#quantity");
 
 const color = document.querySelector("#colors");
 
+//Envoi des informations client au localstorage
 // Gestion du panier
 function addToCart(article) {
   const addToCartBtn = document.querySelector("#addToCart");
@@ -85,11 +86,7 @@ function addToCart(article) {
         choixId: productId,
         choixCouleur: choiceColor,
         choiceQty: parseInt(choiceQuantity),
-        // imageProd: article.imageUrl,
-        // imageAltProd: article.alt,
-        // choixNom: article.name,
-        // choixPrix: article.price,
-        // choixDescription: article.description
+        
       };
       
 
