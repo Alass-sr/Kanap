@@ -70,6 +70,14 @@ function createCartElement(index, product) {
   productQuantity.setAttribute("min", "1");
   productQuantity.setAttribute("max", "100");
   productQuantity.setAttribute("name", "itemQuantity");
+  document.querySelectorAll(".itemQuantity").forEach(productQuantity => {
+    productQuantity.addEventListener("change", (e) => {
+      productLocalStorage.choiceQty({
+      })
+      console.log(choiceQty)
+    })
+  })
+  
 
   let cartItemContentSettingsDelete = document.createElement("div");
   cartItemContentSettingsDelete.className =
@@ -81,10 +89,32 @@ function createCartElement(index, product) {
   cartItemContentSettingsDelete.appendChild(supprimeProd);
   supprimeProd.textContent = "Supprimer";
   supprimeProd.addEventListener("click", (e) => {
-    console.log(supprimeProd.remove());
-  });
-}
+    e.preventDefault;
 
+    // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
+    let supprimeId = productLocalStorage[index].choixId;
+    let supprimeColor = productLocalStorage[index].choixCouleur;
+    
+    // filter l'element à supprimer
+    productLocalStorage = productLocalStorage.filter( elt => elt.choixId !== supprimeId || elt.choixCouleur !== supprimeColor);
+
+
+    // Envoi les données dans le localstorage
+    localStorage.setItem('panier', JSON.stringify(productLocalStorage));
+
+    // Alert de la suppression de l'article
+    alert('Votre article a bien été supprimé.');
+
+    if (productLocalStorage.length === 0) {
+      localStorage.clear();
+  }
+
+  location.reload();
+
+  });
+  // console.log(supprimeProd)
+}
+ 
 async function getCart() {
   // Vérification si panier vide
   if (productLocalStorage === null || productLocalStorage == 0) {
@@ -138,13 +168,14 @@ function getForm() {
     validEmail(this);
   });
 
+  // Validation
   const validFirstName = function (inputFirstName) {
     let firstNameErrorMsg = inputFirstName.nextElementSibling;
 
     if (charRegExp.test(inputFirstName.value)) {
-      firstNameErrorMsg.innerHTML = "";
+      firstNameErrorMsg.innerText = "";
     } else {
-      firstNameErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      firstNameErrorMsg.innerText = "Veuillez renseigner ce champ.";
     }
   };
 
@@ -152,9 +183,9 @@ function getForm() {
     let lastNameErrorMsg = inputLastName.nextElementSibling;
 
     if (charRegExp.test(inputLastName.value)) {
-      lastNameErrorMsg.innerHTML = "";
+      lastNameErrorMsg.innerText = "";
     } else {
-      lastNameErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      lastNameErrorMsg.innerText = "Veuillez renseigner ce champ.";
     }
   };
 
@@ -162,9 +193,9 @@ function getForm() {
     let addressErrorMsg = inputAddress.nextElementSibling;
 
     if (addressRegExp.test(inputAddress.value)) {
-      addressErrorMsg.innerHTML = "";
+      addressErrorMsg.innerText = "";
     } else {
-      addressErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      addressErrorMsg.innerText = "Veuillez renseigner ce champ.";
     }
   };
 
@@ -172,9 +203,9 @@ function getForm() {
     let cityErrorMsg = inputCity.nextElementSibling;
 
     if (charRegExp.test(inputCity.value)) {
-      cityErrorMsg.innerHTML = "";
+      cityErrorMsg.innerText = "";
     } else {
-      cityErrorMsg.innerHTML = "Veuillez renseigner ce champ.";
+      cityErrorMsg.innerText = "Veuillez renseigner ce champ.";
     }
   };
 
@@ -182,9 +213,9 @@ function getForm() {
     let emailErrorMsg = inputEmail.nextElementSibling;
 
     if (emailRegExp.test(inputEmail.value)) {
-      emailErrorMsg.innerHTML = "";
+      emailErrorMsg.innerText = "";
     } else {
-      emailErrorMsg.innerHTML = "Veuillez renseigner votre email.";
+      emailErrorMsg.innerText = "Veuillez renseigner votre email.";
     }
     console.log(emailErrorMsg);
   };
@@ -220,6 +251,8 @@ function postForm() {
     localStorage.setItem("ville", document.getElementById("city").value);
     localStorage.setItem("mail", document.getElementById("city").value);
   });
+
+  
 }
 postForm();
 
