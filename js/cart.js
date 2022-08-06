@@ -1,3 +1,7 @@
+// let article_url_id = window.location.search;
+// let urlParams = new URLSearchParams(article_url_id);
+// let productId = urlParams.get("id");
+
 //Initilaisation Local Storage
 let productLocalStorage = JSON.parse(localStorage.getItem("panier"));
 console.log(productLocalStorage);
@@ -70,14 +74,15 @@ function createCartElement(index, product) {
   productQuantity.setAttribute("min", "1");
   productQuantity.setAttribute("max", "100");
   productQuantity.setAttribute("name", "itemQuantity");
-  document.querySelectorAll(".itemQuantity").forEach(productQuantity => {
-    productQuantity.addEventListener("change", (e) => {
-      productLocalStorage.choiceQty({
-      })
-      console.log(choiceQty)
-    })
-  })
-  
+
+  // document.querySelectorAll(".itemQuantity").forEach(productQuantity => {
+  //   productQuantity.addEventListener("change", (e) => {
+  //     console.log();
+  //     // productLocalStorage.choiceQty({
+  //     // })
+  //     // console.log(choiceQty)
+  //   })
+  // })
 
   let cartItemContentSettingsDelete = document.createElement("div");
   cartItemContentSettingsDelete.className =
@@ -90,31 +95,35 @@ function createCartElement(index, product) {
   supprimeProd.textContent = "Supprimer";
   supprimeProd.addEventListener("click", (e) => {
     e.preventDefault;
+    let article = e.target.closest("article");
 
     // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
-    let supprimeId = productLocalStorage[index].choixId;
-    let supprimeColor = productLocalStorage[index].choixCouleur;
-    
-    // filter l'element à supprimer
-    productLocalStorage = productLocalStorage.filter( elt => elt.choixId !== supprimeId || elt.choixCouleur !== supprimeColor);
+    // let supprimeId = productLocalStorage[index].choixId;
+    // let supprimeColor = productLocalStorage[index].choixCouleur;
+    let supprimeId = article.getAttribute("data-id");
+    let supprimeColor = article.getAttribute("data-color");
 
+    // filter l'element à supprimer
+    productLocalStorage = productLocalStorage.filter(
+      (elt) => elt.choixId !== supprimeId || elt.choixCouleur !== supprimeColor
+    );
 
     // Envoi les données dans le localstorage
-    localStorage.setItem('panier', JSON.stringify(productLocalStorage));
+    localStorage.setItem("panier", JSON.stringify(productLocalStorage));
 
     // Alert de la suppression de l'article
-    alert('Votre article a bien été supprimé.');
+    alert("Votre article a bien été supprimé.");
 
     if (productLocalStorage.length === 0) {
       localStorage.clear();
-  }
+    }
 
-  location.reload();
-
+    // location.reload();
+    article.remove();
   });
   // console.log(supprimeProd)
 }
- 
+
 async function getCart() {
   // Vérification si panier vide
   if (productLocalStorage === null || productLocalStorage == 0) {
@@ -131,6 +140,24 @@ async function getCart() {
   }
 }
 getCart();
+
+
+async function getPrice(prix) {
+  let id = new URL(window.location).searchParams.get("id");
+
+  await fetch("http://localhost:3000/api/products/")
+    .then((response) => response.json())
+    .then((data) => {
+      //  console.log(data);
+      getTotal(data);
+    });
+}
+getPrice();
+
+
+function getTotal() {
+  
+}
 
 // Formulaire
 
@@ -219,17 +246,15 @@ function getForm() {
     }
     console.log(emailErrorMsg);
   };
-
 }
 getForm();
 
-// envoi des informations au local storage
+// envoi des informations
 function postForm() {
   const btnCommander = document.getElementById("order");
 
   // Ecouter les "event"
   btnCommander.addEventListener("click", (e) => {
-
     //Récupération des données du formulaire client
     let inputFirstName = document.getElementById("firstName");
     let inputLastName = document.getElementById("lastName");
@@ -251,8 +276,6 @@ function postForm() {
     localStorage.setItem("ville", document.getElementById("city").value);
     localStorage.setItem("mail", document.getElementById("city").value);
   });
-
-  
 }
 postForm();
 
