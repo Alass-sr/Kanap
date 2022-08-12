@@ -130,7 +130,9 @@ async function getCart() {
     alert("panier vide !");
   } else {
     for (let panierProduct in productLocalStorage) {
+
       let productId = productLocalStorage[panierProduct].choixId;
+      
       await fetch("http://localhost:3000/api/products/" + productId)
         .then((response) => response.json())
         .then((data) => {
@@ -142,22 +144,48 @@ async function getCart() {
 getCart();
 
 
-async function getPrice(prix) {
-  let id = new URL(window.location).searchParams.get("id");
+async function getProd(pId) {
+  
 
-  await fetch("http://localhost:3000/api/products/")
+
+ return await fetch(`http://localhost:3000/api/products/${pId}`)
     .then((response) => response.json())
     .then((data) => {
-      //  console.log(data);
-      getTotal(data);
+        //  console.log(data);
+      return(data);
     });
+    
 }
-getPrice();
 
-
-function getTotal() {
+async function getTotal() {
   
+  
+  console.log("getTotal");
+ 
+  let totalQty = 0;
+
+  let priceTotal = 0;
+
+
+  for ( let product of productLocalStorage) {
+    console.log(product)
+
+    let prodFromBackEnd = await getProd(product.choixId);
+    console.log(prodFromBackEnd);
+    totalQty += product.choiceQty;
+
+    priceTotal += prodFromBackEnd.price *  product.choiceQty;
+
+    
+  }
+console.log(priceTotal);
+console.log(totalQty);
+  
+   
 }
+getTotal();
+
+
 
 // Formulaire
 
@@ -250,11 +278,12 @@ function getForm() {
 getForm();
 
 // envoi des informations
-function postForm() {
+async function postForm() {
   const btnCommander = document.getElementById("order");
 
   // Ecouter les "event"
   btnCommander.addEventListener("click", (e) => {
+
     //Récupération des données du formulaire client
     let inputFirstName = document.getElementById("firstName");
     let inputLastName = document.getElementById("lastName");
@@ -262,130 +291,54 @@ function postForm() {
     let inputCity = document.getElementById("city");
     let inputEmail = document.getElementById("email");
 
-    //Création d'un tableau depuis le local storage
+    //Création d'un tableau 
+
     let idProd = [];
     for (let i = 0; i < productLocalStorage.length; i++) {
-      idProd.push(productLocalStorage[i].idProd);
+      idProd.push(productLocalStorage[i].choixId);
     }
-    // console.log(idProd);
+     console.log(idProd);
 
-    // Envoi des éléments dans le local storage
-    localStorage.setItem("prenom", document.getElementById("firstName").value);
-    localStorage.setItem("nom", document.getElementById("lastName").value);
-    localStorage.setItem("adresse", document.getElementById("address").value);
-    localStorage.setItem("ville", document.getElementById("city").value);
-    localStorage.setItem("mail", document.getElementById("city").value);
-  });
-}
-postForm();
 
-//////////////////////////////////////////////////////////////
-// const firstName = document.getElementById("firstName");
-// const lastName = document.getElementById("lastName");
-// const address = document.getElementById("address");
-// const city = document.getElementById("city");
-// const email = document.getElementById("email");
+     const order = {
+      contact : {
+        firstName: inputFirstName.value,
+        lastName: inputLastName.value,
+        address: inputAddress.value,
+        city: inputCity.value,
+        email: inputEmail.value
+      },
+      products: idProd
+      
+    }
+    console.log(order)
 
-// const emailErrorMsg = document.getElementById("emailErrorMsg");
-// function mailValidate() {
-//     const mailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+     const options = {
+        method: 'POST',
+        body: JSON.stringify(order),
+        Headers: {
+          'Accept': 'application/json', 
+          "Content-Type": "application/json"
+        }
+     }
+       console.log(options)
+     
+     fetch("http://localhost:3000/api/products/order", options)
+    .then((response) => response.json())
+    .then((data) => {
+      
+      console.log(data.orderId);
+    });
+    
+    });
+  }
+  postForm();
+      
 
-//     if(mailRegex.test(email) == false) {
-//         return false;
-//     } else {
-//         emailErrorMsg.textContent = null;
-//         return true;
-//     }
-// }
-// console.log(emailErrorMsg);
+    // // Envoi des éléments dans le local storage
+    // localStorage.setItem("prenom", document.getElementById("firstName").value);
+    // localStorage.setItem("nom", document.getElementById("lastName").value);
+    // localStorage.setItem("adresse", document.getElementById("address").value);
+    // localStorage.setItem("ville", document.getElementById("city").value);
+    // localStorage.setItem("mail", document.getElementById("city").value);
 
-// const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
-// function prenomValidate() {
-//     const prenomRegex = /^[a-z][a-z '-.,]{1,31}$|^$/i;
-//     if(prenomRegex.test(prenom) == false) {
-//         return false;
-//     } else {
-//         firstNameErrorMsg.textContent = null;
-//         return true;
-//     }
-// }
-
-// const lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
-// function nomValidate() {
-//     const nomRegex = /^[a-z][a-z '-.,]{1,31}$|^$/i;
-//     if(nomRegex.test(nom) == false) {
-//         return false;
-//     } else {
-//         lastNameErrorMsg.textContent = null;
-//         return true;
-//     }
-// }
-
-// const addressErrorMsg = document.getElementById("addressErrorMsg");
-// function adresseValidate() {
-//     const adresseRegex = /^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)/;
-//     if(adresseRegex.test(adresse) == false) {
-//         return false;
-//     } else {
-//         addressErrorMsg.textContent = null;
-//         return true;
-//     }
-// }
-
-// const cityErrorMsg = document.getElementById("cityErrorMsg");
-// function VilleValidate() {
-//     const villeRegex = /^[a-zA-Z ,.'-]+$/;
-//     if(villeRegex.test(ville) == false) {
-//         return false;
-//     } else {
-//         cityErrorMsg.textContent = null;
-//         return true;
-//     }
-// }
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-// Instauration formulaire
-
-// function getForm() {
-//     let cartOrderForm = document.querySelector(".cart__order__form");
-
-//     let emailRegExp = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
-//     let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-//     console.log(charRegExp);
-//     let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
-
-//     // Ecoute de la modification du prénom
-//     cartOrderForm.firstName.addEventListener('change', function() {
-//         validFirstName(this);
-//     });
-
-//     cartOrderForm.lastName.addEventListener('change', function() {
-//         validLastName(this);
-//     });
-
-//     cartOrderForm.address.addEventListener('change', function() {
-//         validAddress(this);
-//     });
-
-//     cartOrderForm.city.addEventListener('change', function() {
-//         validCity(this);
-//     });
-// }
-// console.log(getForm);
-// getForm()
-
-//////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-//Envoi des informations client au localstorage
-
-// function postForm() {
-
-//     let btnCommand = document.getElementById("order");
-
-//     //Ecouter le panier
-//     btnCommand.addEventListener("click", (event) =>{
-
-//
