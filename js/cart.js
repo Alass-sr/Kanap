@@ -130,9 +130,8 @@ async function getCart() {
     alert("panier vide !");
   } else {
     for (let panierProduct in productLocalStorage) {
-
       let productId = productLocalStorage[panierProduct].choixId;
-      
+
       await fetch("http://localhost:3000/api/products/" + productId)
         .then((response) => response.json())
         .then((data) => {
@@ -143,49 +142,44 @@ async function getCart() {
 }
 getCart();
 
-
 async function getProd(pId) {
-  
-
-
- return await fetch(`http://localhost:3000/api/products/${pId}`)
+  return await fetch(`http://localhost:3000/api/products/${pId}`)
     .then((response) => response.json())
     .then((data) => {
-        //  console.log(data);
-      return(data);
+      //  console.log(data);
+      return data;
     });
-    
 }
 
 async function getTotal() {
-  
-  
+
   console.log("getTotal");
- 
+
   let totalQty = 0;
 
   let priceTotal = 0;
 
-
-  for ( let product of productLocalStorage) {
-    console.log(product)
+  for (let product of productLocalStorage) {
+    console.log(product);
 
     let prodFromBackEnd = await getProd(product.choixId);
     console.log(prodFromBackEnd);
+
     totalQty += product.choiceQty;
 
-    priceTotal += prodFromBackEnd.price *  product.choiceQty;
-
-    
+    priceTotal += prodFromBackEnd.price * product.choiceQty;
   }
-console.log(priceTotal);
-console.log(totalQty);
-  
-   
+
+  let displayTotalQuantity = document.getElementById("totalQuantity");
+  displayTotalQuantity.textContent = totalQty;
+  // console.log(displayTotalQuantity);
+
+  let displayTotalPrice = document.getElementById("totalPrice");
+  displayTotalPrice.textContent = priceTotal;
+  // console.log(displayTotalPrice);
+
 }
 getTotal();
-
-
 
 // Formulaire
 
@@ -283,7 +277,6 @@ async function postForm() {
 
   // Ecouter les "event"
   btnCommander.addEventListener("click", (e) => {
-
     //Récupération des données du formulaire client
     let inputFirstName = document.getElementById("firstName");
     let inputLastName = document.getElementById("lastName");
@@ -291,54 +284,51 @@ async function postForm() {
     let inputCity = document.getElementById("city");
     let inputEmail = document.getElementById("email");
 
-    //Création d'un tableau 
-
+    //Création d'un tableau
+    
     let idProd = [];
     for (let i = 0; i < productLocalStorage.length; i++) {
       idProd.push(productLocalStorage[i].choixId);
     }
-     console.log(idProd);
+    console.log(idProd);
+    
 
-
-     const order = {
-      contact : {
+    const order = {
+      contact: {
         firstName: inputFirstName.value,
         lastName: inputLastName.value,
         address: inputAddress.value,
         city: inputCity.value,
-        email: inputEmail.value
+        email: inputEmail.value,
       },
-      products: idProd
-      
-    }
-    console.log(order)
+      products: idProd,
+    };
+    console.log(order);
 
-     const options = {
-        method: 'POST',
-        body: JSON.stringify(order),
-        Headers: {
-          'Accept': 'application/json', 
-          "Content-Type": "application/json"
-        }
-     }
-       console.log(options)
-     
-     fetch("http://localhost:3000/api/products/order", options)
-    .then((response) => response.json())
-    .then((data) => {
-      
-      console.log(data.orderId);
-    });
-    
-    });
-  }
-  postForm();
-      
+    const options = {
+      method: "POST",
+      body: JSON.stringify(order),
+      Headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    };
+    console.log(options);
 
-    // // Envoi des éléments dans le local storage
-    // localStorage.setItem("prenom", document.getElementById("firstName").value);
-    // localStorage.setItem("nom", document.getElementById("lastName").value);
-    // localStorage.setItem("adresse", document.getElementById("address").value);
-    // localStorage.setItem("ville", document.getElementById("city").value);
-    // localStorage.setItem("mail", document.getElementById("city").value);
+    fetch("http://localhost:3000/api/products/order", options)
+      .then((response) => response.json())
+      .then((data) => {
 
+
+        console.log(data.orderId);
+      });
+  });
+}
+postForm();
+
+// // Envoi des éléments dans le local storage
+// localStorage.setItem("prenom", document.getElementById("firstName").value);
+// localStorage.setItem("nom", document.getElementById("lastName").value);
+// localStorage.setItem("adresse", document.getElementById("address").value);
+// localStorage.setItem("ville", document.getElementById("city").value);
+// localStorage.setItem("mail", document.getElementById("city").value);
