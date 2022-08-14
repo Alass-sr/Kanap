@@ -6,17 +6,17 @@
 let productLocalStorage = JSON.parse(localStorage.getItem("panier"));
 console.log(productLocalStorage);
 
-const choiceBasket = document.querySelector("#cart__items");
+// const choiceBasket = document.querySelector("#cart__items");
 
 function createCartElement(index, product) {
   let articleProduct = document.createElement("article");
-  articleProduct.className = "cart__items";
+  articleProduct.className = "cart__item";
   articleProduct.setAttribute("data-id", productLocalStorage[index].choixId);
   articleProduct.setAttribute(
     "data-color",
     productLocalStorage[index].choixCouleur
   );
-  choiceBasket.appendChild(articleProduct);
+  document.querySelector("#cart__items").appendChild(articleProduct);
   // console.log(articleProduct);
 
   // Insertion de la "DIV"
@@ -63,26 +63,19 @@ function createCartElement(index, product) {
   cartItemContentSettings.appendChild(cartItemContentSettingsQuantity);
 
   let qtyProd = document.createElement("p");
-  qtyProd.textContent = productLocalStorage[index].choiceQuantity;
+  // qtyProd.textContent = productLocalStorage[index].choiceQty;
   cartItemContentSettingsQuantity.appendChild(qtyProd);
+  qtyProd.textContent = "Qté : ";
 
   // Insertion quantity
   let productQuantity = document.createElement("input");
   productQuantity.className = "itemQuantity";
-  productQuantity.value = productLocalStorage[index].choiceQuantity;
+  productQuantity.value = productLocalStorage[index].choiceQty;
   productQuantity.setAttribute("type", "number");
   productQuantity.setAttribute("min", "1");
   productQuantity.setAttribute("max", "100");
   productQuantity.setAttribute("name", "itemQuantity");
-
-  // document.querySelectorAll(".itemQuantity").forEach(productQuantity => {
-  //   productQuantity.addEventListener("change", (e) => {
-  //     console.log();
-  //     // productLocalStorage.choiceQty({
-  //     // })
-  //     // console.log(choiceQty)
-  //   })
-  // })
+  cartItemContentSettingsQuantity.appendChild(productQuantity);
 
   let cartItemContentSettingsDelete = document.createElement("div");
   cartItemContentSettingsDelete.className =
@@ -153,7 +146,6 @@ async function getProd(pId) {
 
 async function getTotal() {
 
-  console.log("getTotal");
 
   let totalQty = 0;
 
@@ -272,7 +264,7 @@ function getForm() {
 getForm();
 
 // envoi des informations
-async function postForm() {
+ async function postForm() {
   const btnCommander = document.getElementById("order");
 
   // Ecouter les "event"
@@ -319,7 +311,7 @@ async function postForm() {
       .then((response) => response.json())
       .then((data) => {
 
-
+       
         console.log(data.orderId);
       });
   });
