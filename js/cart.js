@@ -152,10 +152,10 @@ async function getTotal() {
   let priceTotal = 0;
 
   for (let product of productLocalStorage) {
-    console.log(product);
+    // console.log(product);
 
     let prodFromBackEnd = await getProd(product.choixId);
-    console.log(prodFromBackEnd);
+    // console.log(prodFromBackEnd);
 
     totalQty += product.choiceQty;
 
@@ -265,10 +265,11 @@ getForm();
 
 // envoi des informations
  async function postForm() {
-  const btnCommander = document.getElementById("order");
+  const form = document.querySelector(".cart__order__form");
 
   // Ecouter les "event"
-  btnCommander.addEventListener("click", (e) => {
+  form.addEventListener("submit", (e) => {
+
     //Récupération des données du formulaire client
     let inputFirstName = document.getElementById("firstName");
     let inputLastName = document.getElementById("lastName");
@@ -307,20 +308,18 @@ getForm();
     };
     console.log(options);
 
-    fetch("http://localhost:3000/api/products/order", options)
+    const urlOrder = "http://localhost:3000/api/products/order";
+    fetch(urlOrder, options)
       .then((response) => response.json())
       .then((data) => {
 
        
-        console.log(data.orderId);
+        alert(JSON.stringify(data));
+        
+      }).catch(function (error) {
+        alert(`fetch failure : ${error}`)
       });
   });
 }
 postForm();
 
-// // Envoi des éléments dans le local storage
-// localStorage.setItem("prenom", document.getElementById("firstName").value);
-// localStorage.setItem("nom", document.getElementById("lastName").value);
-// localStorage.setItem("adresse", document.getElementById("address").value);
-// localStorage.setItem("ville", document.getElementById("city").value);
-// localStorage.setItem("mail", document.getElementById("city").value);
