@@ -87,9 +87,8 @@ function addToCart(article) {
       // Récup le local storage
       let productLocalStorage = JSON.parse(localStorage.getItem("panier"));
 
-      // pop-up
       
-
+      
       // Vérification
       if (productLocalStorage == null) {
         productLocalStorage = [];
@@ -97,8 +96,9 @@ function addToCart(article) {
       // Recherche ligne ayant meme Id meme Color
       const productFind = productLocalStorage.find(
         (el) => el.choixId === productId && el.choixCouleur === choiceColor
-      );
-
+        );
+        
+        // pop-up
       if (
         window.confirm(
           `Votre commande de ${choiceQuantity} ${choiceColor} est ajoutée au panier pour consulter votre panier, cliquez sur OK`
@@ -106,7 +106,7 @@ function addToCart(article) {
       ) {
         if (productFind) {
           // Si le produit est trouver on ajout le produit
-          productFind.choiceQty += parseInt(choiceQuantity);
+          productFind.choiceQty = parseInt(productFind.choiceQty) + parseInt(choiceQuantity);
 
           // On ajout au panier et on le converti
           localStorage.setItem("panier", JSON.stringify(productLocalStorage));
